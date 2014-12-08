@@ -28,6 +28,8 @@
     _dataList = [[NSMutableArray alloc] init];
     _finder = [[SocketFinder alloc] init];
     _finder.delegate = self;
+    
+    [self refreshData];
 }
 
 - (void)dealloc {
@@ -102,8 +104,17 @@
 #pragma mark - SocketHelperDelegate
 
 - (void)socketFinder:(SocketFinder *)finder find:(HostInfo *)host {
-    [_dataList addObject:host];
-    [self.tableView reloadData];
+    BOOL duplicate = false;
+    for (HostInfo *item in _dataList) {
+        if ([item.host isEqualToString:host.host]) {
+            duplicate = true;
+            break;
+        }
+    }
+    if (!duplicate) {
+        [_dataList addObject:host];
+        [self.tableView reloadData];
+    }
 }
 
 #pragma mark - UIAlertViewDelegate

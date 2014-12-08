@@ -10,7 +10,7 @@
 #import "HPGrowingTextView.h"
 
 #define KInputBarHeight 44
-#define KInputViewMinHeight 32
+#define KInputViewMinHeight 34
 #define KInputViewMaxHeight 80
 
 @interface UIInputBar () <HPGrowingTextViewDelegate>

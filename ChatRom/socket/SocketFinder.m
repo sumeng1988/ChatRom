@@ -29,6 +29,8 @@
 - (void)open {
     [self close];
     self.socket = [[GCDAsyncUdpSocket alloc] initWithDelegate:self delegateQueue:dispatch_get_main_queue()];
+    [_socket setIPv4Enabled:YES];
+    [_socket setIPv6Enabled:NO];
 }
 
 - (void)close {
@@ -68,7 +70,7 @@
         return NO;
     }
 
-    [_socket receiveOnce:&err];
+    [_socket beginReceiving:&err];
     if (err) {
         NSLog(@"SocketFinder receive err:%@", err);
         return NO;

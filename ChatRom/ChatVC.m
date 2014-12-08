@@ -48,11 +48,9 @@
 #pragma mark - Native
 
 - (void)insertData:(NSString *)item {
-    if (_dataList.count > 0) {
-        [_tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_dataList.count-1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
-    }
     [_dataList addObject:item];
-    [_tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:_dataList.count-1 inSection:0]] withRowAnimation:UITableViewRowAnimationFade];
+    [_tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:_dataList.count-1 inSection:0]] withRowAnimation:UITableViewRowAnimationRight];
+    [_tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_dataList.count-1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
 }
 
 - (void)recieveContent:(SocketPacketContent *)packetContent host:(HostInfo *)host {
@@ -112,6 +110,12 @@
     _inputBarHeightContraint.constant = height;
 }
 
+- (void)inputBar:(UIInputBar *)bar didChangeHeight:(CGFloat)height {
+    if (_dataList.count > 0) {
+        [_tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_dataList.count-1 inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:YES];
+    }
+}
+
 #pragma mark - SocketHelperDelegate
 
 - (void)socketHelper:(SocketHelper *)helper acceptHost:(HostInfo *)host {
@@ -122,6 +126,7 @@
 - (void)socketHelper:(SocketHelper *)helper connectToHost:(HostInfo *)host {
     NSString *item = [NSString stringWithFormat:@"connect to %@", host.name];
     [self insertData:item];
+    _inputBar.enable = true;
 }
 
 - (void)socketHelper:(SocketHelper *)helper recievePacket:(SocketPacket *)packet host:(HostInfo *)host {
@@ -140,6 +145,9 @@
 - (void)socketHelper:(SocketHelper *)helper disconnect:(HostInfo *)host {
     NSString *item = @"disconnect";
     [self insertData:item];
+    if (!_isServer) {
+        _inputBar.enable = false;
+    }
 }
 
 @end
